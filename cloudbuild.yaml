@@ -21,8 +21,8 @@ steps:
       - '--platform'
       - 'managed'
 
-# Send logs to your new bucket
-logsBucket: 'gs://ai-fieldreports-2026-build-logs'
+# Logs configuration (Aligned at root)
+logsBucket: 'gs://v1-ai-fieldreports-build-logs'
 
 options:
   logging: GCS_ONLY
