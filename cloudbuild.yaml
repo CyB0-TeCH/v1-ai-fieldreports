@@ -1,0 +1,28 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/view-pro-app', '.']
+
+  # Push the image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/view-pro-app']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'ai-fieldreports-2026'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/view-pro-app'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+
+# THIS IS THE PART YOU ASKED FOR:
+logsBucket: 'gs://ai-fieldreports-2026-build-logs'
+
+options:
+  logging: GCS_ONLY
