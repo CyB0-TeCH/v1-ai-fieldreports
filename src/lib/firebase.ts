@@ -1,43 +1,25 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
-import { getStorage, FirebaseStorage } from 'firebase/storage';
-import { getAuth, Auth } from 'firebase/auth';
+import { initializeApp, getApps } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 
-interface FirebaseConfig {
-  apiKey?: string;
-  authDomain?: string;
-  projectId?: string;
-  storageBucket?: string;
-  messagingSenderId?: string;
-  appId?: string;
-}
-
-const getFirebaseConfig = (): FirebaseConfig => {
-  const config: FirebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  };
-
-  const requiredKeys = ['projectId', 'apiKey', 'authDomain', 'appId'] as const;
-  const missing = requiredKeys.filter(key => !config[key]);
-  
-  if (missing.length > 0) {
-    // If we're on the server during a build, don't crash, just warn.
-    // If we're on the client, we need these.
-    console.warn(`Missing Firebase environment variables: ${missing.join(', ')}`);
-  }
-
-  return config;
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const firebaseConfig = getFirebaseConfig();
+// Simple validation to warn us in the logs if something is missing
+if (typeof window !== 'undefined' && !firebaseConfig.projectId) {
+  console.error("Firebase Project ID is missing from environment variables.");
+}
 
-// Initialize Firebase
+// Singleton pattern: prevent double-initialization
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+
 const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
