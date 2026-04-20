@@ -1,27 +1,27 @@
 steps:
   # Build the container image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/view-pro-app', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/v1-ai-fieldreports', '.']
 
-  # Push the image to Container Registry
+  # Push the image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/view-pro-app']
+    args: ['push', 'gcr.io/$PROJECT_ID/v1-ai-fieldreports']
 
-  # Deploy to Cloud Run
+  # Deploy to the REAL service name and region
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - 'run'
       - 'deploy'
-      - 'ai-fieldreports-2026'
+      - 'v1-ai-fieldreports'
       - '--image'
-      - 'gcr.io/$PROJECT_ID/view-pro-app'
+      - 'gcr.io/$PROJECT_ID/v1-ai-fieldreports'
       - '--region'
-      - 'us-central1'
+      - 'us-east1'
       - '--platform'
       - 'managed'
 
-# THIS IS THE PART YOU ASKED FOR:
+# Send logs to your new bucket
 logsBucket: 'gs://ai-fieldreports-2026-build-logs'
 
 options:
